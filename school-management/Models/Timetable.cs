@@ -2,12 +2,12 @@
 {
     public class Timetable
     {
-        public List<Schedule> Schedules { get; set; }
+        public List<Class> Classes { get; set; }
         public int NumberOfConflict { get; set; }
 
         public Timetable() 
         {
-            Schedules = new List<Schedule>();
+            Classes = new List<Class>();
             NumberOfConflict = 0;
         }
         // hard constrain gồm:
@@ -16,29 +16,18 @@
         // học sinh không học 2 lớp cùng một lúc
         public double Fitness()
         {
-            int numberOfConflict = 1;
-            foreach (Schedule schedule in Schedules)
+            int numberOfConflict = 0;
+            foreach (Shift shift in Init.Shifts)
             {
                 // số phòng sử dụng > số phòng trống
-                if (schedule.Shift.MaxRoomPerShift > schedule.Classes.Count())
+                if (shift.MaxRoomPerShift < Classes.Where(x => x.Shift.ShiftId == shift.ShiftId).Count())
                 {
                     numberOfConflict++;
                 }
-
-                /*// giáo viên dạy nhiều lớp cùng 1 lúc
-                var teacherInShift = schedule.Classes.Select(x => x.Teacher).ToList();
-                teacherInShift.OrderBy(x => x.TeacherId);
-                for (int i = 1; i < teacherInShift.Count; i++)
-                {
-                    if (teacherInShift[i].TeacherId == teacherInShift[i - 1].TeacherId)
-                    {
-                        numberOfConflict++;
-                    }
-                }*/
-
+                
                 // 2 học sinh trùng id trong 1 ca -> conflict
                 Dictionary<string, int> dictionary = new Dictionary<string, int>();
-                var studentInShift = schedule.Classes.Select(x => x.Students).ToList();
+                var studentInShift = Classes.Where(x => x.Shift.ShiftId == shift.ShiftId).Select(x => x.Students).ToList();
                 foreach (var listStudents in studentInShift)
                 {
                     foreach (var student in listStudents)
@@ -62,8 +51,24 @@
                     }
                 }
             }
+
+            foreach (var cls in Classes)
+            {
+                if (Classes.Count(x => x.ClassName == cls.ClassName) > 1) 
+                {
+                    numberOfConflict++;
+                }
+            }
             this.NumberOfConflict = numberOfConflict;
             return 1 / (1.0 * (numberOfConflict + 1));
+        }
+
+        public void SortClassByName()
+        {
+            Classes.Sort((a, b) =>
+            {
+                return a.ClassName.CompareTo(b.ClassName);
+            });
         }
     }
 }

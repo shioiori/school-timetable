@@ -11,6 +11,7 @@ namespace school_management.Models
         public List<Student> Students { get; set; }
         public Teacher Teacher { get; set; }
         public Course Course { get; set; }
+        public Shift Shift { get; set; }
 
         public Class()
         {

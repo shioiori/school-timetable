@@ -3,15 +3,14 @@
     public static class Init
     {
         public static List<Student> Students { get; set; }
-        public static List<Teacher> Teachers { get; set; }
         public static List<Course> Courses { get; set; }
         public static List<Class> Classes { get; set; }
         public static List<Shift> Shifts { get; set; }
         public static int POPULATION_SIZE = 5;
         public static int NUMBER_OF_ELITE_TIMETABLE = 1;
-        public static double MUTATE_RATE = 0.2;
-        public static double CROSSOVER_RATE = 0.8;
-        public static void Default(int numberOfStudent = 100, int numberOfTeacher = 5, int numberOfCourse = 5, int capatityOfClass = 25, int numberOfShift = 24)
+        public static double MUTATE_RATE = 0.1;
+        public static double CROSSOVER_RATE = 0.9;
+        public static void Default(int numberOfStudent = 100, int maxRoomPerShift = 20, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
         { 
             Courses = new List<Course>()
             {
@@ -27,12 +26,6 @@
             {
                 var student = new Student();
                 Students.Add(student);
-            }
-            Teachers = new List<Teacher>();
-            for (int i = 0; i < numberOfTeacher; ++i)
-            {
-                var teacher = new Teacher();
-                Teachers.Add(teacher);
             }
             Classes = new List<Class>();
             for (int i = 0; i < Courses.Count; ++i)
@@ -70,45 +63,48 @@
                 {
                     ShiftId = i + 1,
                     ShiftName = "Ca " + ((i % 4) + 1) + " thứ " + Math.Ceiling((i + 1) * 1.0 / 4),
-                    MaxRoomPerShift = 5,
+                    MaxRoomPerShift = maxRoomPerShift,
                 };
                 Shifts.Add(shift);
             }
         }
 
 
-        public static Schedule InitSchedule(ref List<Class> listClasses, Shift shift)
-        {
-            Random random = new Random();
-            int classInShift = random.Next(shift.MaxRoomPerShift);
-            List<Class> classes = new List<Class>();
-            for (int i = 0; i < classInShift; ++i)
-            {
-                if (listClasses.Count == 0) break;
-                int idx = random.Next(listClasses.Count);
-                classes.Add(listClasses[idx]);
-                listClasses.RemoveAt(idx);
-            }
-            Schedule schedule = new Schedule()
-            {
-                Shift = shift,
-                Classes = classes,
-            };
-            return schedule;
-        }
-
         public static Timetable InitTimetable()
         {
             Timetable timetable = new Timetable();
-            var defaultClasses = new List<Class>(Classes);
             Random rand = new Random();
-            while (defaultClasses.Count > 0)
-            {                
-                Shift shift = Shifts[rand.Next(Shifts.Count)];
-                Schedule schedule = InitSchedule(ref defaultClasses, shift);
-                timetable.Schedules.Add(schedule);
+            var defaultClasses = new List<Class>(Classes);
+            foreach (var cls in defaultClasses)
+            {
+                cls.Shift = Shifts[RandomInt(Shifts.Count)];
             }
+            timetable.Classes = defaultClasses;
             return timetable;
+        }
+
+        public static int RandomInt()
+        {
+            Random r = new Random();
+            return r.Next();
+        }
+
+        public static int RandomInt(int a)
+        {
+            Random r = new Random();
+            return r.Next(a);
+        }
+
+        public static int RandomInt(int a, int b)
+        {
+            Random r = new Random();
+            return r.Next(a, b);
+        }
+
+        public static double RandomDouble()
+        {
+            Random r = new Random();
+            return r.NextDouble();
         }
     }
 }

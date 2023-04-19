@@ -13,76 +13,56 @@ namespace school_management.Models
         public void CrossoverPopulation()
         {
             int populationSize = Population.Timetables.Count;
-            int k = 0;
-            while (k < Init.POPULATION_SIZE)
+            for (int i = 1; i < Init.POPULATION_SIZE; i++)
             {
-                for (int i = 0; i < Init.POPULATION_SIZE; i++)
+                if (Init.CROSSOVER_RATE > Init.RandomDouble())
                 {
-                    for (int j = i + 1; j < Init.POPULATION_SIZE; ++j)
-                    {
-                        Random r = new Random();
-                        if (r.NextDouble() < Init.CROSSOVER_RATE)
-                        {
-                            Population.Timetables[k] = CrossoverTimetable(Population.Timetables[i], Population.Timetables[j]);
-                        }
-                        else
-                        {
-                            Population.Timetables[k] = CrossoverTimetable(Population.Timetables[j], Population.Timetables[i]);
-                        }
-                        k++;
-                        if (k >= Init.POPULATION_SIZE)
-                        {
-                            break;
-                        }
-                    }
-                    if (k >= Init.POPULATION_SIZE)
-                    {
-                        break;
-                    }
+                    Population.SortByFitness();
+                    Population.Timetables[i] = CrossoverTimetable(Population.Timetables[0], Population.Timetables[1]);
                 }
             }
-            Population.SortByFitness();
         }
 
         public Timetable CrossoverTimetable(Timetable timetable1, Timetable timetable2)
         {
-            // giữ một nửa schedule của bố, nửa sau schedule của mẹ
-            int timetableSize = timetable1.Schedules.Count;
-            for (int i = 0; i < timetableSize / 2; i++) 
+            timetable1.SortClassByName();
+            timetable2.SortClassByName();
+
+            Timetable timetable = new Timetable();
+            for (int i = 0; i < Init.Classes.Count; ++i)
             {
-                if (i >= timetable2.Schedules.Count)
+                if (Init.RandomDouble() > 0.5)
                 {
-                    break;
+                    timetable.Classes.Add(timetable1.Classes[i]);
                 }
-                timetable1.Schedules[timetableSize - i - 1] = timetable2.Schedules[i];
-                
+                else
+                {
+                    timetable.Classes.Add(timetable2.Classes[i]);
+                }
             }
-            return timetable1;
+            
+            return timetable;
         }
 
         public void MutatePopulation()
         {
-            Random r = new Random();
-            int mutateNumber = r.Next(Init.POPULATION_SIZE);
-            Population.Timetables[mutateNumber] = MutateTimetable(Population.Timetables[mutateNumber]);
-            Population.SortByFitness();
+            for (int i = 1; i < Init.POPULATION_SIZE; i++) 
+            {
+                Population.Timetables[i] = MutateTimetable(Population.Timetables[i]);
+            }
         }
 
         public Timetable MutateTimetable(Timetable timetable)
         {
-            Random r = new Random();
-            if (r.NextDouble() > Init.MUTATE_RATE) 
+            Timetable ttb = Init.InitTimetable();
+            ttb.SortClassByName();
+            timetable.SortClassByName();
+            for (int i = 0; i < Init.Classes.Count; ++i)
             {
-                int mutateNumber = r.Next(timetable.Schedules.Count());
-                while (timetable.Schedules[mutateNumber].Classes.Count == 0)
+                if (Init.RandomDouble() < Init.MUTATE_RATE)
                 {
-                    mutateNumber = r.Next(timetable.Schedules.Count());
+                    timetable.Classes[i] = ttb.Classes[i];
                 }
-                int numberOfClass = timetable.Schedules[mutateNumber].Classes.Count;
-                int randomIndexOfClass = r.Next(numberOfClass);
-                var cls = timetable.Schedules[mutateNumber].Classes[randomIndexOfClass];
-                timetable.Schedules[mutateNumber].Classes.Remove(cls);
-                timetable.Schedules[timetable.Schedules.Count - mutateNumber - 1].Classes.Add(cls);
             }
             return timetable;
         }
@@ -92,6 +72,7 @@ namespace school_management.Models
             int genTime = 1;
             while (Population.Timetables[0].Fitness() != 1 && genTime < 1000)
             {
+                Population.SortByFitness();
                 CrossoverPopulation();
                 MutatePopulation();
                 genTime++;
