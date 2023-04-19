@@ -1,0 +1,119 @@
+﻿
+<link href="~/css/index.css" rel="stylesheet" />
+<div class="total">
+
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="row day-columns">
+                <div class="day-column">
+                    <div class="day-header">Monday</div>
+                    <div class="day-content">
+                        <div class="event gray" id="shift1">
+                        </div>
+                        <div class="event orange" id="shift2">
+                        </div>
+                        <div class="event red" id="shift3">
+                        </div>
+                        <div class="event blue" id="shift4">
+                        </div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Tuesday</div>
+                    <div class="day-content">
+                        <div class="event gray" id="shift5">
+                        </div>
+                        <div class="event orange" id="shift6">
+                        </div>
+                        <div class="event red" id="shift7">
+                        </div>
+                        <div class="event blue" id="shift8">
+                        </div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Wednesday</div>
+                    <div class="day-content">
+                        <div class="event gray" id="shift9">
+                        </div>
+                        <div class="event orange" id="shift10">
+                        </div>
+                        <div class="event red" id="shift11">
+                        </div>
+                        <div class="event blue" id="shift12">
+                        </div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Thursday</div>
+                    <div class="day-content">
+                        <div class="event gray" id="shift13">
+                        </div>
+                        <div class="event orange" id="shift14">
+                        </div>
+                        <div class="event red" id="shift15">
+                        </div>
+                        <div class="event blue" id="shift16">
+                        </div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Friday</div>
+                    <div class="day-content">
+                        <div class="event gray" id="shift17">
+                        </div>
+                        <div class="event orange" id="shift18">
+                        </div>
+                        <div class="event red" id="shift19">
+                        </div>
+                        <div class="event blue" id="shift20">
+                        </div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Saturday</div>
+                    <div class="day-content">
+                        <div class="event gray" id="shift21">
+                        </div>
+                        <div class="event orange" id="shift22">
+                        </div>
+                        <div class="event red" id="shift23">
+                        </div>
+                        <div class="event blue" id="shift24">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        $.ajax({
+            url: "/api/timetable",
+            type: "GET",
+            dataType: "json",
+            beforeSend: function () { },
+            success: function (data) {
+                console.log(data.timetable);
+                $('.total').append(`<h4>Lượt gen: ${data.generationTime}</h4>`);
+                $('.total').append(`<h4>Số lỗi: ${data.numberOfConflict}</h4>`);
+                var timetable = data.timetable.schedules;
+                timetable.forEach(function (item, index) {
+                    var id = "#shift" + item.shift.shiftId;
+                    console.log(id);
+                    item.classes.forEach(function (item, index) {
+                        $(id).append(`<span class="title">${item.className}</span>`);
+                    });
+                });
+            },
+            error: function () { },
+            complete: function () { }
+        });
+    </script>
