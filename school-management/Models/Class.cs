@@ -11,12 +11,13 @@ namespace school_management.Models
         public List<Student> Students { get; set; }
         public Teacher Teacher { get; set; }
         public Course Course { get; set; }
-        public Shift Shift { get; set; }
+        public List<Shift> Shifts { get; set; }
 
         public Class()
         {
             ClassId = Guid.NewGuid().ToString();
             Students = new List<Student>();
+            Shifts = new List<Shift>();
         }
     }
 }

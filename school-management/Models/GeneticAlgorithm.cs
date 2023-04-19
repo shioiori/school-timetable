@@ -70,7 +70,7 @@ namespace school_management.Models
         public object Evolve()
         {
             int genTime = 1;
-            while (Population.Timetables[0].Fitness() != 1 && genTime < 1000)
+            while (Population.Timetables[0].Fitness() != 1 && genTime < 100)
             {
                 Population.SortByFitness();
                 CrossoverPopulation();

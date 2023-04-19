@@ -1,4 +1,7 @@
-﻿namespace school_management.Models
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.Generic;
+
+namespace school_management.Models
 {
     public class Timetable
     {
@@ -17,48 +20,68 @@
         public double Fitness()
         {
             int numberOfConflict = 0;
-            foreach (Shift shift in Init.Shifts)
+            Dictionary<KeyValuePair<string, int>, int> ShiftClass = new Dictionary<KeyValuePair<string, int>, int>();
+            foreach (var cls in Classes)
             {
-                // số phòng sử dụng > số phòng trống
-                if (shift.MaxRoomPerShift < Classes.Where(x => x.Shift.ShiftId == shift.ShiftId).Count())
+                foreach (var sh in cls.Shifts)
+                {
+                    var key = new KeyValuePair<string, int>(cls.ClassId, sh.MaxRoomPerShift);
+                    if (ShiftClass.ContainsKey(key))
+                    {
+                        ShiftClass[key] ++;
+                    }
+                    else
+                    {
+                        ShiftClass.Add(key, 1);
+                    }
+                }
+            }
+            // số phòng sử dụng > số phòng trống
+            foreach (var cl in ShiftClass)
+            {
+                if (cl.Value > cl.Key.Value)
                 {
                     numberOfConflict++;
                 }
-                
-                // 2 học sinh trùng id trong 1 ca -> conflict
-                Dictionary<string, int> dictionary = new Dictionary<string, int>();
-                var studentInShift = Classes.Where(x => x.Shift.ShiftId == shift.ShiftId).Select(x => x.Students).ToList();
-                foreach (var listStudents in studentInShift)
+            }
+
+            // conflict lịch học sinh
+            Dictionary<KeyValuePair<string, int>, int> ShiftStudent = new Dictionary<KeyValuePair<string, int>, int>();
+            foreach (var cls in Classes)
+            {
+                foreach (var sh in cls.Shifts)
                 {
-                    foreach (var student in listStudents)
+                    foreach (var st in cls.Students)
                     {
-                        if (dictionary.ContainsKey(student.StudentId))
+                        var key = new KeyValuePair<string, int>(st.StudentId, sh.ShiftId);
+                        if (ShiftStudent.ContainsKey(key))
                         {
-                            dictionary[student.StudentId]++;
+                            ShiftStudent[key]++;
                         }
                         else
                         {
-                            dictionary.Add(student.StudentId, 1);
+                            ShiftStudent.Add(key, 1);
                         }
-                    }
-                }
-
-                foreach (var student in dictionary)
-                {
-                    if (student.Value > 1)
-                    {
-                        numberOfConflict++;
                     }
                 }
             }
 
-            foreach (var cls in Classes)
+            foreach (var cl in ShiftStudent)
             {
-                if (Classes.Count(x => x.ClassName == cls.ClassName) > 1) 
+                if (cl.Value > 1)
                 {
                     numberOfConflict++;
                 }
             }
+
+            /*            foreach (var cls in Classes)
+                        {
+                            if (Classes.Count(x => x.ClassName == cls.ClassName) > 1) 
+                            {
+                                numberOfConflict++;
+                            }
+                        }
+            */
             this.NumberOfConflict = numberOfConflict;
             return 1 / (1.0 * (numberOfConflict + 1));
         }

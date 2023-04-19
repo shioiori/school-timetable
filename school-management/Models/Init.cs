@@ -10,7 +10,7 @@
         public static int NUMBER_OF_ELITE_TIMETABLE = 1;
         public static double MUTATE_RATE = 0.1;
         public static double CROSSOVER_RATE = 0.9;
-        public static void Default(int numberOfStudent = 100, int maxRoomPerShift = 20, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
+        public static void Default(int numberOfStudent = 100, int maxRoomPerShift = 5, int numberOfCourse = 5, int capatityOfClass = 25, int numberOfShift = 24)
         { 
             Courses = new List<Course>()
             {
@@ -30,30 +30,30 @@
             Classes = new List<Class>();
             for (int i = 0; i < Courses.Count; ++i)
             {
-                for (int j = 0; j < Courses[i].ShiftRequirePerWeek; ++j)
+                Random r = new Random();
+                var studentInCourse = Students.Where(x => x.Courses.Select(x => x.CourseId).Contains(Courses[i].CourseId)).ToList();
+                var newClass = new Class() {
+                    Capacity = capatityOfClass,
+                    Course = Courses[i],
+                    ClassName = Courses[i].CourseName + " " + Init.RandomInt(),
+                };
+                foreach (var student in studentInCourse)
                 {
-                    Random r = new Random();
-                    var studentInCourse = Students.Where(x => x.Courses.Select(x => x.CourseId).Contains(Courses[i].CourseId)).ToList();
-                    var newClass = new Class();
-                    newClass.Capacity = capatityOfClass;
-                    newClass.Course = Courses[i];
-                    newClass.ClassName = Courses[i].CourseName + " " + (j + 1);
-                    foreach (var student in studentInCourse)
-                    {
-                        if (newClass.Students.Count() == newClass.Capacity)
-                        {
-                            Classes.Add(newClass);
-                            newClass = new Class();
-                            newClass.ClassName = Courses[i].CourseName + " " + (j + 1);
-                            newClass.Course = Courses[i];
-                            newClass.Capacity = capatityOfClass;
-                        }
-                        newClass.Students.Add(student);
-                    }
-                    if (!Classes.Contains(newClass))
+                    if (newClass.Students.Count() == newClass.Capacity)
                     {
                         Classes.Add(newClass);
+                        newClass = new Class()
+                        {
+                            ClassName = Courses[i].CourseName + " " + Init.RandomInt(),
+                            Course = Courses[i],
+                            Capacity = capatityOfClass,
+                        };
                     }
+                    newClass.Students.Add(student);
+                }
+                if (!Classes.Contains(newClass))
+                {
+                    Classes.Add(newClass);
                 }
             }
             Shifts = new List<Shift>();
@@ -77,7 +77,14 @@
             var defaultClasses = new List<Class>(Classes);
             foreach (var cls in defaultClasses)
             {
-                cls.Shift = Shifts[RandomInt(Shifts.Count)];
+                for (int i = 0; i < cls.Course.ShiftRequirePerWeek; ++i)
+                {
+                    var sh = Shifts[RandomInt(Shifts.Count)];
+                    if (!cls.Shifts.Contains(sh))
+                    {
+                        cls.Shifts.Add(sh);
+                    }
+                }
             }
             timetable.Classes = defaultClasses;
             return timetable;
