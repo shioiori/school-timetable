@@ -101,12 +101,15 @@
             dataType: "json",
             beforeSend: function () { },
             success: function (data) {
+                console.log(data);
                 $('.total').append(`<h4>Lượt gen: ${data.generationTime}</h4>`);
                 $('.total').append(`<h4>Số lỗi: ${data.numberOfConflict}</h4>`);
                 var timetable = data.timetable.classes;
                 timetable.forEach(function (item, index) {
-                    var id = "#shift" + item.shift.shiftId;
-                    $(id).append(`<span class="title">${item.className}</span>`);
+                    item.shifts.forEach(function (itm, index) {
+                        var id = "#shift" + itm.shiftId;
+                        $(id).append(`<span class="title">${item.className}</span>`);
+                    });
                 });
             },
             error: function () { },

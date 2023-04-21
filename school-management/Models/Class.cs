@@ -19,5 +19,16 @@ namespace school_management.Models
             Students = new List<Student>();
             Shifts = new List<Shift>();
         }
+
+        public Class(Class cls)
+        {
+            ClassId = cls.ClassId;
+            ClassName = cls.ClassName;
+            Capacity = cls.Capacity;
+            Students = cls.Students.Select(x => new Student(x)).ToList();
+            Shifts = cls.Shifts.Select(x => new Shift(x)).ToList();
+            Course = cls.Course;
+            Teacher = cls.Teacher;
+        }
     }
 }

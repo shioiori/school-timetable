@@ -30,5 +30,13 @@ namespace school_management.Models
             }
             Classes = new List<Class>();
         }
+
+        public Student(Student st)
+        {
+            StudentId = st.StudentId; 
+            StudentName = st.StudentName;
+            Courses = st.Courses.Select(x => new Course(x)).ToList();
+            Classes = st.Classes.Select(x => new Class(x)).ToList(); 
+        }
     }
 }

@@ -10,7 +10,7 @@
         public static int NUMBER_OF_ELITE_TIMETABLE = 1;
         public static double MUTATE_RATE = 0.1;
         public static double CROSSOVER_RATE = 0.9;
-        public static void Default(int numberOfStudent = 100, int maxRoomPerShift = 5, int numberOfCourse = 5, int capatityOfClass = 25, int numberOfShift = 24)
+        public static void Default(int numberOfStudent = 1000, int maxRoomPerShift = 20, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
         { 
             Courses = new List<Course>()
             {
@@ -74,7 +74,7 @@
         {
             Timetable timetable = new Timetable();
             Random rand = new Random();
-            var defaultClasses = new List<Class>(Classes);
+            var defaultClasses = Classes.Select(x => new Class(x)).ToList();
             foreach (var cls in defaultClasses)
             {
                 for (int i = 0; i < cls.Course.ShiftRequirePerWeek; ++i)

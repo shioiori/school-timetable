@@ -10,5 +10,13 @@ namespace school_management.Models
         public string ShiftName { get; set; }
         public int MaxRoomPerShift { get; set; }
 
+        public Shift() { }
+        public Shift(Shift x)
+        {
+            ShiftId = x.ShiftId;
+            ShiftName = x.ShiftName;
+            MaxRoomPerShift = x.MaxRoomPerShift;
+        }
+
     }
 }
