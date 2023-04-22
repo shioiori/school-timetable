@@ -20,6 +20,28 @@ namespace school_management.Models
         public double Fitness()
         {
             int numberOfConflict = 0;
+
+            // count number of shifts for each class and each shift's max room
+            var shiftClassCounts = Classes.SelectMany(cls => cls.Shifts, (cls, sh) => new { ClassId = cls.ClassId, MaxRoomPerShift = sh.MaxRoomPerShift })
+                                          .GroupBy(x => new { x.ClassId, x.MaxRoomPerShift })
+                                          .ToDictionary(x => x.Key, x => x.Count());
+
+            // check if number of shifts exceeds max room for each shift
+            numberOfConflict += shiftClassCounts.Count(x => x.Value > x.Key.MaxRoomPerShift);
+
+            // count number of shifts for each student and each shift's id
+            var shiftStudentCounts = Classes.SelectMany(cls => cls.Shifts, (cls, sh) => new { Students = cls.Students, ShiftId = sh.ShiftId })
+                                            .SelectMany(x => x.Students, (x, st) => new { StudentId = st.StudentId, ShiftId = x.ShiftId })
+                                            .GroupBy(x => new { x.StudentId, x.ShiftId })
+                                            .ToDictionary(x => x.Key, x => x.Count());
+
+            // check if number of shifts for any student exceeds 1
+            numberOfConflict += shiftStudentCounts.Count(x => x.Value > 1);
+
+            this.NumberOfConflict = numberOfConflict;
+            return 1 / (1.0 * (numberOfConflict + 1));
+
+           /* int numberOfConflict = 0;
             Dictionary<KeyValuePair<int, int>, int> ShiftClass = new Dictionary<KeyValuePair<int, int>, int>();
             foreach (var cls in Classes)
             {
@@ -73,17 +95,8 @@ namespace school_management.Models
                     numberOfConflict++;
                 }
             }
-
-            /*            foreach (var cls in Classes)
-                        {
-                            if (Classes.Count(x => x.ClassName == cls.ClassName) > 1) 
-                            {
-                                numberOfConflict++;
-                            }
-                        }
-            */
             this.NumberOfConflict = numberOfConflict;
-            return 1 / (1.0 * (numberOfConflict + 1));
+            return 1 / (1.0 * (numberOfConflict + 1));*/
         }
 
         /*public void SortClassByName()

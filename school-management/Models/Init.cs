@@ -8,8 +8,8 @@
         public static List<Shift> Shifts { get; set; }
         public static int POPULATION_SIZE = 5;
         public static int NUMBER_OF_ELITE_TIMETABLE = 1;
-        public static double MUTATE_RATE = 0.15;
-        public static double CROSSOVER_RATE = 0.85;
+        public static double MUTATE_RATE = 0.1;
+        public static double CROSSOVER_RATE = 0.9;
         public static Random r = new Random();
         public static void Default(int numberOfStudent = 500, int maxRoomPerShift = 20, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
         { 
@@ -79,20 +79,15 @@
         {
             Timetable timetable = new Timetable();
             Random rand = new Random();
-            var defaultClasses = new List<Class>();
-            foreach (var cls in Classes)
-            {
+
+            var defaultClasses = Classes.Select(cls => {
                 var newCls = new Class(cls);
-                for (int i = 0, shiftRequire = newCls.Course.ShiftRequirePerWeek; i < shiftRequire; ++i)
-                {
-                    var sh = Shifts[RandomInt(Shifts.Count)];
-                    if (!newCls.Shifts.Contains(sh))
-                    {
-                        newCls.Shifts.Add(sh);
-                    }
-                }
-                defaultClasses.Add(newCls);
-            }
+                var shiftRequire = newCls.Course.ShiftRequirePerWeek;
+                var shifts = Shifts.OrderBy(x => rand.Next()).Take(shiftRequire).Distinct().ToList();
+                newCls.Shifts.AddRange(shifts);
+                return newCls;
+            }).ToList();
+
             timetable.Classes = defaultClasses;
             return timetable;
         }
