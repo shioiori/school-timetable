@@ -6,9 +6,6 @@ namespace school_management.Models
 {
     public class GeneticAlgorithm
     {
-        private readonly Random random = new Random();
-        private readonly int populationSize;
-        private readonly int numberOfClasses;
 
         public Population Population { get; }
 
@@ -16,30 +13,28 @@ namespace school_management.Models
         {
             Init.Default();
             Population = new Population(Init.POPULATION_SIZE);
-            populationSize = Init.POPULATION_SIZE;
-            numberOfClasses = Init.Classes.Count;
         }
 
         public void CrossoverPopulation()
         {
-            Parallel.For(1, Init.POPULATION_SIZE, i =>
+            for (int i = 1; i < Init.POPULATION_SIZE; ++i)
             {
-                if (Init.CROSSOVER_RATE > random.NextDouble())
+                if (Init.CROSSOVER_RATE > Init.RandomDouble())
                 {
                     Population.SortByFitness();
                     var first_timetable = Population.Timetables[0];
                     var second_timetable = Population.Timetables[1];
                     Population.Timetables[i] = CrossoverTimetable(ref first_timetable, ref second_timetable);
                 }
-            });
+            }
         }
 
         public Timetable CrossoverTimetable(ref Timetable timetable1, ref Timetable timetable2)
         {
             Timetable timetable = new Timetable();
-            for (int i = 0; i < numberOfClasses; ++i)
+            for (int i = 0, numberOfClasses = Init.Classes.Count; i < numberOfClasses; ++i)
             {
-                if (random.NextDouble() > 0.5)
+                if (Init.RandomDouble() > 0.5)
                 {
                     timetable.Classes.Add(timetable1.Classes[i]);
                 }
@@ -63,9 +58,9 @@ namespace school_management.Models
         public Timetable MutateTimetable(Timetable timetable)
         {
             Timetable ttb = Init.InitTimetable();
-            for (int i = 0; i < numberOfClasses; ++i)
+            for (int i = 0, numberOfClasses = Init.Classes.Count; i < numberOfClasses; ++i)
             {
-                if (random.NextDouble() < Init.MUTATE_RATE)
+                if (Init.RandomDouble() < Init.MUTATE_RATE)
                 {
                     timetable.Classes[i] = ttb.Classes[i];
                 }
