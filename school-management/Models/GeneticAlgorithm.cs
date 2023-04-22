@@ -74,7 +74,7 @@ namespace school_management.Models
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            while (Population.Timetables[0].Fitness() != 1 && genTime < 1000)
+            while (Population.Timetables[0].Fitness() != 1)
             {
                 CrossoverPopulation();
                 MutatePopulation();
