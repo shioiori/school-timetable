@@ -103,7 +103,8 @@
             success: function (data) {
                 console.log(data);
                 $('.total').append(`<h4>Lượt gen: ${data.generationTime}</h4>`);
-                $('.total').append(`<h4>Số lỗi: ${data.numberOfConflict}</h4>`);
+            $('.total').append(`<h4>Số lỗi: ${data.numberOfConflict}</h4>`);
+            $('.total').append(`<h4>Thời gian chạy: ${data.elapseTime}</h4>`);
                 var timetable = data.timetable.classes;
                 timetable.forEach(function (item, index) {
                     item.shifts.forEach(function (itm, index) {

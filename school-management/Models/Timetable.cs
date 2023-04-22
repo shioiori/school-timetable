@@ -20,12 +20,12 @@ namespace school_management.Models
         public double Fitness()
         {
             int numberOfConflict = 0;
-            Dictionary<KeyValuePair<string, int>, int> ShiftClass = new Dictionary<KeyValuePair<string, int>, int>();
+            Dictionary<KeyValuePair<int, int>, int> ShiftClass = new Dictionary<KeyValuePair<int, int>, int>();
             foreach (var cls in Classes)
             {
                 foreach (var sh in cls.Shifts)
                 {
-                    var key = new KeyValuePair<string, int>(cls.ClassId, sh.MaxRoomPerShift);
+                    var key = new KeyValuePair<int, int>(cls.ClassId, sh.MaxRoomPerShift);
                     if (ShiftClass.ContainsKey(key))
                     {
                         ShiftClass[key] ++;
@@ -86,12 +86,12 @@ namespace school_management.Models
             return 1 / (1.0 * (numberOfConflict + 1));
         }
 
-        public void SortClassByName()
+        /*public void SortClassByName()
         {
             Classes.Sort((a, b) =>
             {
                 return a.ClassName.CompareTo(b.ClassName);
             });
-        }
+        }*/
     }
 }

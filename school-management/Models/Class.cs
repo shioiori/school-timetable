@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace school_management.Models
 {
     public class Class
     {
         [Key]
-        public string ClassId { get; set; }
+        public int ClassId { get; set; }
         public string ClassName { get; set; }
         public int Capacity { get; set; }
         public List<Student> Students { get; set; }
@@ -15,7 +16,6 @@ namespace school_management.Models
 
         public Class()
         {
-            ClassId = Guid.NewGuid().ToString();
             Students = new List<Student>();
             Shifts = new List<Shift>();
         }
@@ -25,8 +25,8 @@ namespace school_management.Models
             ClassId = cls.ClassId;
             ClassName = cls.ClassName;
             Capacity = cls.Capacity;
-            Students = cls.Students.Select(x => new Student(x)).ToList();
-            Shifts = cls.Shifts.Select(x => new Shift(x)).ToList();
+            Students = new List<Student>(cls.Students);
+            Shifts = new List<Shift>(cls.Shifts);
             Course = cls.Course;
             Teacher = cls.Teacher;
         }

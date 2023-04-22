@@ -8,9 +8,10 @@
         public static List<Shift> Shifts { get; set; }
         public static int POPULATION_SIZE = 5;
         public static int NUMBER_OF_ELITE_TIMETABLE = 1;
-        public static double MUTATE_RATE = 0.1;
-        public static double CROSSOVER_RATE = 0.9;
-        public static void Default(int numberOfStudent = 1000, int maxRoomPerShift = 20, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
+        public static double MUTATE_RATE = 0.15;
+        public static double CROSSOVER_RATE = 0.85;
+        public static Random r = new Random();
+        public static void Default(int numberOfStudent = 500, int maxRoomPerShift = 20, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
         { 
             Courses = new List<Course>()
             {
@@ -28,15 +29,16 @@
                 Students.Add(student);
             }
             Classes = new List<Class>();
-            for (int i = 0; i < Courses.Count; ++i)
+            for (int i = 0, idx = 0; i < Courses.Count; ++i)
             {
-                Random r = new Random();
                 var studentInCourse = Students.Where(x => x.Courses.Select(x => x.CourseId).Contains(Courses[i].CourseId)).ToList();
                 var newClass = new Class() {
+                    ClassId = idx,
                     Capacity = capatityOfClass,
                     Course = Courses[i],
-                    ClassName = Courses[i].CourseName + " " + Init.RandomInt(),
+                    ClassName = Courses[i].CourseName + " " + idx,
                 };
+                idx++;
                 foreach (var student in studentInCourse)
                 {
                     if (newClass.Students.Count() == newClass.Capacity)
@@ -44,16 +46,19 @@
                         Classes.Add(newClass);
                         newClass = new Class()
                         {
-                            ClassName = Courses[i].CourseName + " " + Init.RandomInt(),
+                            ClassId = idx,
+                            ClassName = Courses[i].CourseName + " " + idx,
                             Course = Courses[i],
                             Capacity = capatityOfClass,
                         };
+                        idx++;
                     }
                     newClass.Students.Add(student);
                 }
                 if (!Classes.Contains(newClass))
                 {
                     Classes.Add(newClass);
+                    idx++;
                 }
             }
             Shifts = new List<Shift>();
@@ -74,17 +79,19 @@
         {
             Timetable timetable = new Timetable();
             Random rand = new Random();
-            var defaultClasses = Classes.Select(x => new Class(x)).ToList();
-            foreach (var cls in defaultClasses)
+            var defaultClasses = new List<Class>();
+            foreach (var cls in Classes)
             {
-                for (int i = 0; i < cls.Course.ShiftRequirePerWeek; ++i)
+                var newCls = new Class(cls);
+                for (int i = 0, shiftRequire = newCls.Course.ShiftRequirePerWeek; i < shiftRequire; ++i)
                 {
                     var sh = Shifts[RandomInt(Shifts.Count)];
-                    if (!cls.Shifts.Contains(sh))
+                    if (!newCls.Shifts.Contains(sh))
                     {
-                        cls.Shifts.Add(sh);
+                        newCls.Shifts.Add(sh);
                     }
                 }
+                defaultClasses.Add(newCls);
             }
             timetable.Classes = defaultClasses;
             return timetable;
@@ -92,25 +99,21 @@
 
         public static int RandomInt()
         {
-            Random r = new Random();
             return r.Next();
         }
 
         public static int RandomInt(int a)
         {
-            Random r = new Random();
             return r.Next(a);
         }
 
         public static int RandomInt(int a, int b)
         {
-            Random r = new Random();
             return r.Next(a, b);
         }
 
         public static double RandomDouble()
         {
-            Random r = new Random();
             return r.NextDouble();
         }
     }

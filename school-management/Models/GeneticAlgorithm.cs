@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace school_management.Models
 {
@@ -18,18 +20,17 @@ namespace school_management.Models
                 if (Init.CROSSOVER_RATE > Init.RandomDouble())
                 {
                     Population.SortByFitness();
-                    Population.Timetables[i] = CrossoverTimetable(Population.Timetables[0], Population.Timetables[1]);
+                    var first_timetable = Population.Timetables[0];
+                    var second_timetable = Population.Timetables[1];
+                    Population.Timetables[i] = CrossoverTimetable(ref first_timetable, ref second_timetable);
                 }
             }
         }
 
-        public Timetable CrossoverTimetable(Timetable timetable1, Timetable timetable2)
+        public Timetable CrossoverTimetable(ref Timetable timetable1, ref Timetable timetable2)
         {
-            timetable1.SortClassByName();
-            timetable2.SortClassByName();
-
             Timetable timetable = new Timetable();
-            for (int i = 0; i < Init.Classes.Count; ++i)
+            for (int i = 0, numberOfClasses = Init.Classes.Count; i < numberOfClasses; ++i)
             {
                 if (Init.RandomDouble() > 0.5)
                 {
@@ -55,9 +56,7 @@ namespace school_management.Models
         public Timetable MutateTimetable(Timetable timetable)
         {
             Timetable ttb = Init.InitTimetable();
-            ttb.SortClassByName();
-            timetable.SortClassByName();
-            for (int i = 0; i < Init.Classes.Count; ++i)
+            for (int i = 0, numberOfClasses = Init.Classes.Count; i < numberOfClasses; ++i)
             {
                 if (Init.RandomDouble() < Init.MUTATE_RATE)
                 {
@@ -70,16 +69,21 @@ namespace school_management.Models
         public object Evolve()
         {
             int genTime = 1;
-            while (Population.Timetables[0].Fitness() != 1)
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            while (Population.Timetables[0].Fitness() != 1 && genTime < 1000)
             {
-                Population.SortByFitness();
                 CrossoverPopulation();
                 MutatePopulation();
                 genTime++;
             }
             Population.SortByFitness();
+            stopwatch.Stop();
+            TimeSpan timespan = stopwatch.Elapsed;
             return new
             {
+                ElapseTime = string.Format("{0:D2}:{1:D2}:{2:D2}", timespan.Hours, timespan.Minutes, timespan.Seconds),
                 GenerationTime = genTime,
                 NumberOfConflict = Population.Timetables[0].NumberOfConflict,
                 Timetable = Population.Timetables[0],

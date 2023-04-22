@@ -7,14 +7,6 @@ namespace school_management.Controllers
 {
     public class TimetableController : Controller
     {
-        private readonly SchoolManagementContext _dbContext;
-        private readonly IMapper _mapper;
-        public TimetableController(SchoolManagementContext dbContext, IMapper mapper)
-        {
-            _dbContext = dbContext;
-            _mapper = mapper;
-        }
-
         public IActionResult Index()
         {
             return View();
@@ -26,6 +18,20 @@ namespace school_management.Controllers
         {
             GeneticAlgorithm algorithm = new GeneticAlgorithm();
             return Json(algorithm.Evolve());
+        }
+
+        [HttpGet]
+        [Route("/api/student")]
+        public IActionResult Student()
+        {
+            return Json(Init.Students);
+        }
+
+        [HttpGet]
+        [Route("api/course")]
+        public IActionResult Course()
+        {
+            return Json(Init.Courses);
         }
     }
 }
