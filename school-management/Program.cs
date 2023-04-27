@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddAutoMapper();
 //builder.Services.AddDbContext<SchoolManagementContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SchoolManagement")));
 
 var app = builder.Build();

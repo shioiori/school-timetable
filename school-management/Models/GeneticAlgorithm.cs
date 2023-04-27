@@ -73,22 +73,24 @@ namespace school_management.Models
             int genTime = 1;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-
-            while (Population.Timetables[0].Fitness() != 1)
+            if (Init.Timetable == null)
             {
-                CrossoverPopulation();
-                MutatePopulation();
-                genTime++;
+                while (Population.Timetables[0].Fitness() != 1)
+                {
+                    CrossoverPopulation();
+                    MutatePopulation();
+                    genTime++;
+                }
+                Init.Timetable = Population.Timetables[0];
             }
-
             stopwatch.Stop();
             TimeSpan timespan = stopwatch.Elapsed;
             return new
             {
                 ElapseTime = string.Format("{0:D2}:{1:D2}:{2:D2}", timespan.Hours, timespan.Minutes, timespan.Seconds),
                 GenerationTime = genTime,
-                NumberOfConflict = Population.Timetables[0].NumberOfConflict,
-                Timetable = Population.Timetables[0],
+                NumberOfConflict = Init.Timetable.NumberOfConflict,
+                Timetable = Init.Timetable,
             };
         }
 

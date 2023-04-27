@@ -26,6 +26,10 @@ namespace school_management.Models
             for (int i = 0; i < count; i++)
             {
                 var course = Init.Courses[random.Next(Init.Courses.Count)];
+                while (Courses.Contains(course))
+                {
+                    course = Init.Courses[random.Next(Init.Courses.Count)];
+                }
                 Courses.Add(course);
             }
             Classes = new List<Class>();

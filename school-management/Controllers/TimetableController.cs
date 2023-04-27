@@ -21,10 +21,27 @@ namespace school_management.Controllers
         }
 
         [HttpGet]
-        [Route("/api/student")]
+        [Route("/student")]
         public IActionResult Student()
         {
-            return Json(Init.Students);
+            Init.Default();
+            return View(Init.Students);
+        }
+
+        [HttpGet]
+        [Route("/api/search")]
+        public IActionResult Search(string studentId)
+        {
+            studentId = studentId.Trim();
+            Timetable timetable = new Timetable();
+            foreach (var cls in Init.Timetable.Classes)
+            {
+                if (cls.Students.Select(x => x.StudentId).ToList().Contains(studentId))
+                {
+                    timetable.Classes.Add(cls);
+                }
+            }
+            return Json(timetable);
         }
 
         [HttpGet]

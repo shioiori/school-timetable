@@ -1,8 +1,19 @@
-﻿
-<link href="~/css/index.css" rel="stylesheet" />
-<div class="total">
+﻿@{
+    Layout = "_Layout";
+}
 
+<link href="~/css/index.css" rel="stylesheet" />
+<link href="~/css/loading_screen.css" rel="stylesheet" />
+<script src="~/js/loading_screen.js"></script>
+
+<div id="loading-wrapper">
+  <div id="loading-text">LOADING</div>
+  <div id="loading-content"></div>
 </div>
+
+<div class="total">
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-12">
@@ -95,25 +106,61 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
-        $.ajax({
-            url: "/api/timetable",
-            type: "GET",
-            dataType: "json",
-            beforeSend: function () { },
-            success: function (data) {
-                console.log(data);
-                $('.total').append(`<h4>Lượt gen: ${data.generationTime}</h4>`);
-            $('.total').append(`<h4>Số lỗi: ${data.numberOfConflict}</h4>`);
-            $('.total').append(`<h4>Thời gian chạy: ${data.elapseTime}</h4>`);
-                var timetable = data.timetable.classes;
-                timetable.forEach(function (item, index) {
-                    item.shifts.forEach(function (itm, index) {
-                        var id = "#shift" + itm.shiftId;
-                        $(id).append(`<span class="title">${item.className}</span>`);
+        function TimetableLoading(){
+            ShowLoadingScreen();
+            $.ajax({
+                url: "/api/timetable",
+                type: "GET",
+                dataType: "json",
+                beforeSend: function () { },
+                success: function (data) {
+                    console.log(data);
+                    $('.total').append(`<h4>Lượt gen: ${data.generationTime}</h4>`);
+                    $('.total').append(`<h4>Số lỗi: ${data.numberOfConflict}</h4>`);
+                    $('.total').append(`<h4>Thời gian chạy: ${data.elapseTime}</h4>`);
+                    var timetable = data.timetable.classes;
+                    timetable.forEach(function (item, index) {
+                        item.shifts.forEach(function (itm, index) {
+                            var id = "#shift" + itm.shiftId;
+                            $(id).append(`<span class="title">${item.className}</span>`);
+                        });
                     });
-                });
-            },
-            error: function () { },
-            complete: function () { }
-        });
+                },
+                error: function () { },
+                complete: function () {
+                    HideLoadingScreen();
+                }
+            });
+        }
+
+        function searchTimetable(){
+            ShowLoadingScreen();
+            $.ajax({
+                url: "/api/search",
+                type: "GET",
+                data: {
+                    studentId: $('input[name="studentId"]').val()
+                },
+                dataType: "json",
+                beforeSend: function () { },
+                success: function (data) {
+                    var timetable = data.classes;
+                    timetable.forEach(function (item, index) {
+                        item.shifts.forEach(function (itm, index) {
+                            var id = "#c" + itm.shiftId;
+                            $(id).append(`<span class="title">${item.className}</span>`);
+                        });
+                    });
+                },
+                error: function () { },
+                complete: function () {
+                    HideLoadingScreen();
+                }
+            });
+        }
+
+        window.onload = function(){
+            HideLoadingScreen();
+            TimetableLoading();
+        }
     </script>

@@ -6,13 +6,17 @@
         public static List<Course> Courses { get; set; }
         public static List<Class> Classes { get; set; }
         public static List<Shift> Shifts { get; set; }
+
+        public static Timetable Timetable { get; set; }
+
         public static int POPULATION_SIZE = 5;
         public static int NUMBER_OF_ELITE_TIMETABLE = 1;
         public static double MUTATE_RATE = 0.1;
         public static double CROSSOVER_RATE = 0.9;
         public static Random r = new Random();
         public static void Default(int numberOfStudent = 3000, int maxRoomPerShift = 50, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
-        { 
+        {
+            if (Classes != null) return;
             Courses = new List<Course>()
             {
                 new Course(){ CourseId = "TAA1", CourseName = "Tiếng Anh A1", ShiftRequirePerWeek = 2 },

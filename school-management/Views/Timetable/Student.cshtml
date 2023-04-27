@@ -1,0 +1,127 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<link href="~/css/loading_screen.css" rel="stylesheet" />
+<script src="~/js/loading_screen.js"></script>
+
+<div class="container">
+    <input type="text" name="studentId" />
+    <button type="button" onclick="searchTimetable()">Tra cứu</button>
+    <table class="table table-bordered">
+        <tr>
+            <th></th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+        </tr>
+        <tr>
+            <th>Ca 1</th>
+            <td id="c1"></td>
+            <td id="c5"></td>
+            <td id="c9"></td>
+            <td id="c13"></td>
+            <td id="c17"></td>
+            <td id="c21"></td>
+        </tr>
+        <tr>
+            <th>Ca 2</th>
+            <td id="c2"></td>
+            <td id="c6"></td>
+            <td id="c10"></td>
+            <td id="c14"></td>
+            <td id="c18"></td>
+            <td id="c22"></td>
+        </tr>
+        <tr>
+            <th>Ca 3</th>
+            <td id="c3"></td>
+            <td id="c7"></td>
+            <td id="c11"></td>
+            <td id="c12"></td>
+            <td id="c19"></td>
+            <td id="c23"></td>
+        </tr>
+        <tr>
+            <th>Ca 4</th>
+            <td id="c4"></td>
+            <td id="c8"></td>
+            <td id="c12"></td>
+            <td id="c16"></td>
+            <td id="c20"></td>
+            <td id="c24"></td>
+        </tr>
+    </table>
+</div>
+
+
+<div class="box-body table-responsive no-padding">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Mã học sinh</th>
+                <th>Tên học sinh</th>
+                <th>Môn học đăng ký</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.StudentId</td>
+                        <td>@item.StudentName</td>
+                        <td>
+                            <ul>
+                                @foreach (var course in item.Courses)
+                                {
+                                    <li>@course.CourseName</li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script>
+
+    function searchTimetable() {
+        ShowLoadingScreen();
+        $.ajax({
+            url: "/api/search",
+            type: "GET",
+            data: {
+                studentId: $('input[name="studentId"]').val()
+            },
+            dataType: "json",
+            beforeSend: function () { },
+            success: function (data) {
+                if (data == ""){
+                    alert("Chưa sinh thời khoá biểu");
+                    return;
+                }
+                var timetable = data.classes;
+                timetable.forEach(function (item, index) {
+                    item.shifts.forEach(function (itm, index) {
+                        var id = "#c" + itm.shiftId;
+                        $(id).append(`<span class="title">${item.className}</span>`);
+                    });
+                });
+            },
+            error: function () { },
+            complete: function () {
+                HideLoadingScreen();
+            }
+        });
+    }
+</script>
