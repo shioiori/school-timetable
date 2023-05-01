@@ -21,7 +21,7 @@ namespace school_management.Models
             Random random = new Random();
             int randomNumber = random.Next(0, name.Count());
             StudentName = name[randomNumber];
-            int count = random.Next(1, 6);
+            int count = random.Next(1, Init.Courses.Count);
             Courses = new List<Course>();
             for (int i = 0; i < count; i++)
             {

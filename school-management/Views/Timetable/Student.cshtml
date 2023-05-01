@@ -3,11 +3,20 @@
 }
 
 <link href="~/css/loading_screen.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/student.css" />
 <script src="~/js/loading_screen.js"></script>
 
+
 <div class="container">
-    <input type="text" name="studentId" />
-    <button type="button" onclick="searchTimetable()">Tra cứu</button>
+    <nav class="navbar">
+        <div class="container-fluid" style="padding: 0;">
+            <form class="d-flex">
+                <input class="form-control me-2" type="text" name="studentId" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="button" onclick="searchTimetable()">Search</button>
+                <small>Nhập mã sinh viên để tra cứu thời khoá biểu của sinh viên đó</small>
+            </form>
+        </div>
+    </nav>
     <table class="table table-bordered">
         <tr>
             <th></th>
@@ -55,40 +64,39 @@
             <td id="c24"></td>
         </tr>
     </table>
-</div>
 
 
-<div class="box-body table-responsive no-padding">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Mã học sinh</th>
-                <th>Tên học sinh</th>
-                <th>Môn học đăng ký</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.StudentId</td>
-                        <td>@item.StudentName</td>
-                        <td>
-                            <ul>
-                                @foreach (var course in item.Courses)
-                                {
-                                    <li>@course.CourseName</li>
-                                }
-                            </ul>
-                        </td>
-                    </tr>
+    <div class="box-body table-responsive no-padding">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Mã học sinh</th>
+                    <th>Tên học sinh</th>
+                    <th>Môn học đăng ký</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.StudentId</td>
+                            <td>@item.StudentName</td>
+                            <td>
+                                <ul>
+                                    @foreach (var course in item.Courses)
+                                    {
+                                        <li>@course.CourseName</li>
+                                    }
+                                </ul>
+                            </td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
-
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -106,7 +114,7 @@
             dataType: "json",
             beforeSend: function () { },
             success: function (data) {
-                if (data == ""){
+                if (data == "") {
                     alert("Chưa sinh thời khoá biểu");
                     return;
                 }

@@ -14,7 +14,7 @@
         public static double MUTATE_RATE = 0.1;
         public static double CROSSOVER_RATE = 0.9;
         public static Random r = new Random();
-        public static void Default(int numberOfStudent = 3000, int maxRoomPerShift = 50, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
+        public static void Default(int numberOfStudent = 1000, int maxRoomPerShift = 50, int numberOfCourse = 5, int capatityOfClass = 70, int numberOfShift = 24)
         {
             if (Classes != null) return;
             Courses = new List<Course>()
@@ -24,7 +24,10 @@
                 new Course(){ CourseId = "CSDL", CourseName = "Cơ sở dữ liệu", ShiftRequirePerWeek = 3 },
                 new Course(){ CourseId = "MMT", CourseName = "Mạng máy tính", ShiftRequirePerWeek = 1 },
                 new Course(){ CourseId = "HTTT", CourseName = "Hệ thống thông tin", ShiftRequirePerWeek = 2 },
-                new Course(){ CourseId = "CTDLGT", CourseName = "Cấu trúc dữ liệu và giải thuật", ShiftRequirePerWeek = 2 }
+                new Course(){ CourseId = "CTDLGT", CourseName = "Cấu trúc dữ liệu và giải thuật", ShiftRequirePerWeek = 2 },
+                new Course(){ CourseId = "LTAR", CourseName = "Lập trình Android", ShiftRequirePerWeek = 2 },
+                new Course(){ CourseId = "ATBMTT", CourseName = "An toàn bảo mật thông tin", ShiftRequirePerWeek = 2 },
+                new Course(){ CourseId = "TTNT", CourseName = "Trí tuệ nhân tạo", ShiftRequirePerWeek = 2 }
             };
             Students = new List<Student>();
             for (int i = 0; i < numberOfStudent; ++i)
@@ -33,8 +36,9 @@
                 Students.Add(student);
             }
             Classes = new List<Class>();
-            for (int i = 0, idx = 0; i < Courses.Count; ++i)
+            for (int i = 0; i < Courses.Count; ++i)
             {
+                int idx = 1;
                 var studentInCourse = Students.Where(x => x.Courses.Select(x => x.CourseId).Contains(Courses[i].CourseId)).ToList();
                 var newClass = new Class() {
                     ClassId = idx,

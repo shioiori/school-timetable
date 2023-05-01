@@ -11,94 +11,58 @@
   <div id="loading-content"></div>
 </div>
 
+@*
 <div class="total">
-</div>
+</div>*@
 
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="row day-columns">
-                <div class="day-column">
-                    <div class="day-header">Monday</div>
-                    <div class="day-content">
-                        <div class="event gray" id="shift1">
-                        </div>
-                        <div class="event orange" id="shift2">
-                        </div>
-                        <div class="event red" id="shift3">
-                        </div>
-                        <div class="event blue" id="shift4">
-                        </div>
-                    </div>
-                </div>
-                <div class="day-column">
-                    <div class="day-header">Tuesday</div>
-                    <div class="day-content">
-                        <div class="event gray" id="shift5">
-                        </div>
-                        <div class="event orange" id="shift6">
-                        </div>
-                        <div class="event red" id="shift7">
-                        </div>
-                        <div class="event blue" id="shift8">
-                        </div>
-                    </div>
-                </div>
-                <div class="day-column">
-                    <div class="day-header">Wednesday</div>
-                    <div class="day-content">
-                        <div class="event gray" id="shift9">
-                        </div>
-                        <div class="event orange" id="shift10">
-                        </div>
-                        <div class="event red" id="shift11">
-                        </div>
-                        <div class="event blue" id="shift12">
-                        </div>
-                    </div>
-                </div>
-                <div class="day-column">
-                    <div class="day-header">Thursday</div>
-                    <div class="day-content">
-                        <div class="event gray" id="shift13">
-                        </div>
-                        <div class="event orange" id="shift14">
-                        </div>
-                        <div class="event red" id="shift15">
-                        </div>
-                        <div class="event blue" id="shift16">
-                        </div>
-                    </div>
-                </div>
-                <div class="day-column">
-                    <div class="day-header">Friday</div>
-                    <div class="day-content">
-                        <div class="event gray" id="shift17">
-                        </div>
-                        <div class="event orange" id="shift18">
-                        </div>
-                        <div class="event red" id="shift19">
-                        </div>
-                        <div class="event blue" id="shift20">
-                        </div>
-                    </div>
-                </div>
-                <div class="day-column">
-                    <div class="day-header">Saturday</div>
-                    <div class="day-content">
-                        <div class="event gray" id="shift21">
-                        </div>
-                        <div class="event orange" id="shift22">
-                        </div>
-                        <div class="event red" id="shift23">
-                        </div>
-                        <div class="event blue" id="shift24">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <table class="table table-bordered">
+        <tr>
+            <th></th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
+        </tr>
+        <tr>
+            <th>Ca 1</th>
+            <td id="shift1"></td>
+            <td id="shift5"></td>
+            <td id="shift9"></td>
+            <td id="shift13"></td>
+            <td id="shift17"></td>
+            <td id="shift21"></td>
+        </tr>
+        <tr>
+            <th>Ca 2</th>
+            <td id="shift2"></td>
+            <td id="shift6"></td>
+            <td id="shift10"></td>
+            <td id="shift14"></td>
+            <td id="shift18"></td>
+            <td id="shift22"></td>
+        </tr>
+        <tr>
+            <th>Ca 3</th>
+            <td id="shift3"></td>
+            <td id="shift7"></td>
+            <td id="shift11"></td>
+            <td id="shift12"></td>
+            <td id="shift19"></td>
+            <td id="shift23"></td>
+        </tr>
+        <tr>
+            <th>Ca 4</th>
+            <td id="shift4"></td>
+            <td id="shift8"></td>
+            <td id="shift12"></td>
+            <td id="shift16"></td>
+            <td id="shift20"></td>
+            <td id="shift24"></td>
+        </tr>
+    </table>
 </div>
 
 
@@ -122,33 +86,7 @@
                     timetable.forEach(function (item, index) {
                         item.shifts.forEach(function (itm, index) {
                             var id = "#shift" + itm.shiftId;
-                            $(id).append(`<span class="title">${item.className}</span>`);
-                        });
-                    });
-                },
-                error: function () { },
-                complete: function () {
-                    HideLoadingScreen();
-                }
-            });
-        }
-
-        function searchTimetable(){
-            ShowLoadingScreen();
-            $.ajax({
-                url: "/api/search",
-                type: "GET",
-                data: {
-                    studentId: $('input[name="studentId"]').val()
-                },
-                dataType: "json",
-                beforeSend: function () { },
-                success: function (data) {
-                    var timetable = data.classes;
-                    timetable.forEach(function (item, index) {
-                        item.shifts.forEach(function (itm, index) {
-                            var id = "#c" + itm.shiftId;
-                            $(id).append(`<span class="title">${item.className}</span>`);
+                            $(id).append(`<p class="title">${item.className}</p>`);
                         });
                     });
                 },
